@@ -9,7 +9,6 @@ starttime = datetime.datetime.now()
 sc = SparkContext()
 #sqlContext = SQLContext(sc)
 rawData = sc.textFile('/Users/apple/Downloads/milliondata.txt')
-#rawData = sc.textFile('/Users/apple/Downloads/10000.txt')
 dataset = rawData.map(lambda line: line.split('\t')).map(lambda element: Rating(int(element[0]), int(element[1]), float(element[2])))
 print(type(dataset))
 
@@ -25,7 +24,7 @@ tModel = ALS.train(trainingData,30,20,0.04)
 testdata = testData.map(lambda t: (t[0], t[1]))
 predictions = tModel.predictAll(testdata).map(lambda t: ((t[0], t[1]), t[2]))
 ratesAndPreds = testData.map(lambda t: ((t[0], t[1]), t[2])).join(predictions)
-MSE = ratesAndPreds.map(lambda s: (s[1][0] - s[1][1])**2).mean()  #
+MSE = ratesAndPreds.map(lambda s: (s[1][0] - s[1][1])**2).mean()  
 print("Root Mean Squared Error = " + str(np.sqrt(MSE)/10))
 print("ratesAndPreds",ratesAndPreds.take(50))
 
